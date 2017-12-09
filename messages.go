@@ -1,31 +1,30 @@
 package main
 
-import "github.com/davecgh/go-spew/spew"
-import "time"
+import (
+	"time"
+)
 
-var knownHosts map[string]pingMessage
+var h knownHosts
+
+type knownHosts map[string]*pingMessage
 
 func init() {
-	knownHosts = make(map[string]pingMessage)
+	h = make(knownHosts)
 }
 
 type pingMessage struct {
-	Hostname string `json:"hostname"`
-	PingTime time.Time
+	Hostname               string    `json:"hostname"`
+	PingTimeHumanFriendly  string    `json:"ping_time_humanfriendly"`
+	LastAlertHumanFriendly string    `json:"last_alert_humanfriendly"`
+	PingTime               time.Time `json:"ping_time"`
+	LastAlert              time.Time `json:"last_alert"`
 }
 
 func notice(m pingMessage) error {
-
-	knownHosts[m.Hostname] = pingMessage{
+	h[m.Hostname] = &pingMessage{
 		Hostname: m.Hostname,
 		PingTime: time.Now(),
 	}
 
-	// check if h is known
-
-	// if h is not known, then add as new host
-
-	// if h is known, then update time
-	spew.Dump(knownHosts)
 	return nil
 }

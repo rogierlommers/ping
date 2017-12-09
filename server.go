@@ -36,7 +36,28 @@ func startServer() error {
 
 func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "all ok\n")
+
+	var response []pingMessage
+	for _, message := range h {
+		pm := pingMessage{
+			Hostname:               message.Hostname,
+			PingTime:               message.PingTime,
+			PingTimeHumanFriendly:  humanize.Time(message.PingTime),
+			LastAlertHumanFriendly: humanize.Time(message.LastAlert),
+			LastAlert:              message.LastAlert,
+		}
+
+		response = append(response, pm)
+	}
+
+	b, err := json.MarshalIndent(response, "", "  ")
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	w.Header().Add("Content-type", "application/json")
+	w.Write(b)
 }
 
 func pingPOSTHandler(w http.ResponseWriter, r *http.Request) {
@@ -68,14 +89,25 @@ func checkUptime() {
 		time.Sleep(2 * time.Second)
 
 		// check hosts
-		if len(knownHosts) == 0 {
+		if len(h) == 0 {
 			logrus.Error("no hosts found")
 			continue
 		}
 
-		for key, pingMessage := range knownHosts {
-			logrus.Debugf("node: %s, previous ping: %s", key, humanize.Time(pingMessage.PingTime))
+		for key, m := range h {
+			// calculate difference
+			downtimeDuration := time.Since(m.PingTime)
+			if downtimeDuration.Minutes() > downtrigger {
+				// node considered down
+				lastMailDuration := time.Since(m.LastAlert)
+				if lastMailDuration.Minutes() > alertFrequency {
+					notifyDowntime(m)
+					m.LastAlert = time.Now()
+				} else {
+					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
+					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.PingTime), secondsUntilAlert)
+				}
+			}
 		}
-
 	}
 }
