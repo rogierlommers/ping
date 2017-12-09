@@ -68,4 +68,5 @@ func getHostname() string {
 	}
 
 	return hostname
+	//return fmt.Sprintf("%s-%s", hostname, time.Now())
 }

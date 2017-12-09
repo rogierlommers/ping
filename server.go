@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
+	humanize "github.com/dustin/go-humanize"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
@@ -19,6 +19,10 @@ func startServer() error {
 	api.HandleFunc("/ping", pingGETHandler).Methods("GET")
 	api.HandleFunc("/ping", pingPOSTHandler).Methods("POST")
 
+	// every now and then, check status of nodes
+	go checkUptime()
+
+	// run http server
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         hostPort,
@@ -43,11 +47,35 @@ func pingPOSTHandler(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 	}
 
-	err = json.Unmarshal(bytes, &incoming)
-	spew.Dump(incoming)
+	if err = json.Unmarshal(bytes, &incoming); err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	if err = notice(incoming); err != nil {
+		logrus.Error(err)
+	}
 
 	w.WriteHeader(http.StatusOK)
 	logrus.Debugf("incoming ping from %q", r.RemoteAddr)
 
 	fmt.Fprint(w, "all ok\n")
+}
+
+func checkUptime() {
+	for {
+		// wait
+		time.Sleep(2 * time.Second)
+
+		// check hosts
+		if len(knownHosts) == 0 {
+			logrus.Error("no hosts found")
+			continue
+		}
+
+		for key, pingMessage := range knownHosts {
+			logrus.Debugf("node: %s, previous ping: %s", key, humanize.Time(pingMessage.PingTime))
+		}
+
+	}
 }
