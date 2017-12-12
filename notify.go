@@ -10,9 +10,8 @@ import (
 
 const (
 	alertFrequency = 5.00 // in minutes
-	downtrigger = 5.00 // in minutes
+	downtrigger    = 5.00 // in minutes
 )
-
 
 var (
 	mail     gmail.Client
@@ -20,9 +19,13 @@ var (
 )
 
 func setupAlerting(user string, pass string) {
-	logrus.Debugf("enabling alerts for email %q", user)
-	mail = gmail.NewClient(user, pass)
-	receiver = user
+	if len(user) == 0 || len(pass) == 0 {
+		logrus.Error("email user and/or password empty!")
+	} else {
+		logrus.Infof("enabling alerts for email %q", user)
+		mail = gmail.NewClient(user, pass)
+		receiver = user
+	}
 }
 
 func notifyDowntime(m *pingMessage) {
