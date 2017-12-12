@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -21,9 +22,7 @@ var (
 func init() {
 	flag.StringVar(&mode, "mode", "client", "specify if we need to run as a server or as a client")
 	flag.StringVar(&targetServer, "server", "http://localhost:8080", "the location of the server, f.e. http://ping.lommers.org")
-	flag.StringVar(&host, "host", "localhost", "host to bind on, f.e. localhost")
-	flag.StringVar(&emailUser, "emailuser", "", "gmail address to use for alerting")
-	flag.StringVar(&emailPassword, "emailpassword", "", "gmail password to use for alerting")
+	flag.StringVar(&host, "host", "0.0.0.0", "host to bind on, f.e. localhost")
 	flag.BoolVar(&debug, "debug", false, "true for debug mode")
 	flag.IntVar(&port, "port", 8080, "port number to bind on, f.e. 8080")
 	flag.Parse()
@@ -35,6 +34,10 @@ func init() {
 
 	// setup alerting
 	setupAlerting(emailUser, emailPassword)
+
+	// read environment var
+	emailUser = os.Getenv("emailuser")
+	emailPassword = os.Getenv("emailpassword")
 }
 
 func main() {
@@ -46,6 +49,7 @@ func main() {
 		}
 
 	case "server":
+		logrus.Infof("using email user %q", emailUser)
 		if err := startServer(); err != nil {
 			logrus.Error(err)
 		}
