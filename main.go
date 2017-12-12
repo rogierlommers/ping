@@ -32,12 +32,10 @@ func init() {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	// setup alerting
-	setupAlerting(emailUser, emailPassword)
-
 	// read environment var
 	emailUser = os.Getenv("emailuser")
 	emailPassword = os.Getenv("emailpassword")
+	setupAlerting(emailUser, emailPassword)
 }
 
 func main() {
