@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -15,6 +16,8 @@ import (
 func startServer() error {
 	hostPort := fmt.Sprintf("%s:%d", host, port)
 	router := mux.NewRouter()
+	router.HandleFunc("/", rootHandler).Methods("GET")
+
 	api := router.PathPrefix("/api").Subrouter()
 	api.HandleFunc("/ping", pingGETHandler).Methods("GET")
 	api.HandleFunc("/ping", pingPOSTHandler).Methods("POST")
@@ -110,4 +113,9 @@ func checkUptime() {
 			}
 		}
 	}
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-type", "text/html")
+	io.WriteString(w, "<html><head><title>pingback</title></head><body><h2>pingback server</h2><div><a href='/api/ping'>/api/ping</a></div></body></html>")
 }

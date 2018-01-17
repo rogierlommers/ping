@@ -13,11 +13,11 @@ func init() {
 }
 
 type pingMessage struct {
-	Hostname               string    `json:"hostname"`
-	PingTimeHumanFriendly  string    `json:"ping_time_humanfriendly"`
-	LastAlertHumanFriendly string    `json:"last_alert_humanfriendly"`
-	PingTime               time.Time `json:"ping_time"`
-	LastAlert              time.Time `json:"last_alert"`
+	Hostname               string `json:"hostname"`
+	PingTimeHumanFriendly  string `json:"last_ping"`
+	LastAlertHumanFriendly string `json:"last_alert"`
+	PingTime               time.Time
+	LastAlert              time.Time
 }
 
 func notice(m pingMessage) error {
