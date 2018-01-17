@@ -32,7 +32,7 @@ func notifyDowntime(m *pingMessage) {
 	emailMessage := gmail.Message{
 		Receiver: receiver,
 		Subject:  fmt.Sprintf("host %s is down", m.Hostname),
-		Body:     fmt.Sprintf("host down: %s\nlast seen: %s, \n\n bye!", m.Hostname, humanize.Time(m.PingTime)),
+		Body:     fmt.Sprintf("host down: %s\nlast seen: %s, \n\n bye!", m.Hostname, humanize.Time(m.pingTime)),
 	}
 
 	// finally send message

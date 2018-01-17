@@ -44,10 +44,8 @@ func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 	for _, message := range h {
 		pm := pingMessage{
 			Hostname:               message.Hostname,
-			PingTime:               message.PingTime,
-			PingTimeHumanFriendly:  humanize.Time(message.PingTime),
-			LastAlertHumanFriendly: humanize.Time(message.LastAlert),
-			LastAlert:              message.LastAlert,
+			PingTimeHumanFriendly:  humanize.Time(message.pingTime),
+			LastAlertHumanFriendly: humanize.Time(message.lastAlert),
 		}
 
 		response = append(response, pm)
@@ -99,16 +97,16 @@ func checkUptime() {
 
 		for key, m := range h {
 			// calculate difference
-			downtimeDuration := time.Since(m.PingTime)
+			downtimeDuration := time.Since(m.pingTime)
 			if downtimeDuration.Minutes() > downtrigger {
 				// node considered down
-				lastMailDuration := time.Since(m.LastAlert)
+				lastMailDuration := time.Since(m.lastAlert)
 				if lastMailDuration.Minutes() > alertFrequency {
 					notifyDowntime(m)
-					m.LastAlert = time.Now()
+					m.lastAlert = time.Now()
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
-					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.PingTime), secondsUntilAlert)
+					logrus.Errorf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
 				}
 			}
 		}
