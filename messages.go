@@ -21,9 +21,15 @@ type pingMessage struct {
 }
 
 func notice(m pingMessage) error {
-	h[m.Hostname] = &pingMessage{
-		Hostname: m.Hostname,
-		PingTime: time.Now(),
+	if _, ok := h[m.Hostname]; ok {
+		// known hostname, only update pingtime
+		h[m.Hostname].PingTime = time.Now()
+	} else {
+		// unknown (new) hostname
+		h[m.Hostname] = &pingMessage{
+			Hostname: m.Hostname,
+			PingTime: time.Now(),
+		}
 	}
 
 	return nil
