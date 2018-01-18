@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
@@ -42,15 +43,25 @@ func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 
 	var response []pingMessage
 	for _, message := range h {
+
 		pm := pingMessage{
-			Hostname:               message.Hostname,
-			PingTimeHumanFriendly:  humanize.Time(message.pingTime),
-			LastAlertHumanFriendly: humanize.Time(message.lastAlert),
+			Hostname:              message.Hostname,
+			PingTimeHumanFriendly: humanize.Time(message.pingTime),
+		}
+
+		if message.lastAlert.IsZero() {
+			pm.LastAlertHumanFriendly = "never"
+		} else {
+			pm.LastAlertHumanFriendly = humanize.Time(message.lastAlert)
 		}
 
 		response = append(response, pm)
 	}
 
+	// now sort by hostname
+	sort.Sort(messageSorter(response))
+
+	// and send to client
 	b, err := json.MarshalIndent(response, "", "  ")
 	if err != nil {
 		logrus.Error(err)
@@ -91,7 +102,7 @@ func checkUptime() {
 
 		// check hosts
 		if len(h) == 0 {
-			logrus.Error("no hosts found")
+			logrus.Error("did not receive a ping at all")
 			continue
 		}
 
@@ -106,7 +117,7 @@ func checkUptime() {
 					m.lastAlert = time.Now()
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
-					logrus.Errorf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
+					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
 				}
 			}
 		}
