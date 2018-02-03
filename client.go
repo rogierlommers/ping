@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -56,6 +58,8 @@ func pingBack(message pingMessage) error {
 func newPingMessage() (pingMessage, error) {
 	message := pingMessage{
 		Hostname: getHostname(),
+		IPv4:     getExternalIP("v4"),
+		IPv6:     getExternalIP("v6"),
 	}
 
 	return message, nil
@@ -68,5 +72,28 @@ func getHostname() string {
 	}
 
 	return hostname
-	//return fmt.Sprintf("%s-%s", hostname, time.Now())
+}
+
+func getExternalIP(version string) string {
+
+	var targetURL string
+	switch version {
+	case "v4":
+		targetURL = "http://ipv4.myexternalip.com/raw"
+	case "v6":
+		targetURL = "http://ipv6.myexternalip.com/raw"
+	}
+
+	resp, err := http.Get(targetURL)
+	if err != nil {
+		return err.Error()
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err.Error()
+	}
+
+	return strings.TrimSuffix(string(body), "\n")
 }
