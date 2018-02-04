@@ -16,14 +16,13 @@ var client = &http.Client{}
 
 func startClient() error {
 	logrus.Infof("running as a client, connecting to %s", targetServer)
-	// get client information
+
 	message, err := newPingMessage()
 	if err != nil {
 		logrus.Errorf("unable to build ping message, abort ping: %q", err.Error())
 		return nil
 	}
 
-	// ping back
 	if err := pingBack(message); err != nil {
 		logrus.Error(err)
 	}
@@ -60,6 +59,7 @@ func newPingMessage() (pingMessage, error) {
 		Hostname: getHostname(),
 		IPv4:     getExternalIP("v4"),
 		IPv6:     getExternalIP("v6"),
+		NoAlert:  noAlert,
 	}
 
 	return message, nil
@@ -75,8 +75,8 @@ func getHostname() string {
 }
 
 func getExternalIP(version string) string {
-
 	var targetURL string
+
 	switch version {
 	case "v4":
 		targetURL = "http://ipv4.myexternalip.com/raw"

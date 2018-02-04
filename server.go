@@ -26,7 +26,6 @@ func startServer() error {
 	// every now and then, check status of nodes
 	go checkUptime()
 
-	// run http server
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         hostPort,
@@ -34,6 +33,8 @@ func startServer() error {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	// run http server
+	logrus.Infof("using email user %q", emailUser)
 	logrus.Infof("running as a server on %s", hostPort)
 	return srv.ListenAndServe()
 }
@@ -47,8 +48,9 @@ func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 		pm := pingMessage{
 			Hostname:              message.Hostname,
 			PingTimeHumanFriendly: humanize.Time(message.pingTime),
-			IPv4: message.IPv4,
-			IPv6: message.IPv6,
+			IPv4:    message.IPv4,
+			IPv6:    message.IPv6,
+			NoAlert: message.NoAlert,
 		}
 
 		if message.lastAlert.IsZero() {
@@ -115,8 +117,12 @@ func checkUptime() {
 				// node considered down
 				lastMailDuration := time.Since(m.lastAlert)
 				if lastMailDuration.Minutes() > alertFrequency {
-					notifyDowntime(m)
-					m.lastAlert = time.Now()
+					if !m.NoAlert {
+						notifyDowntime(m)
+						m.lastAlert = time.Now()
+					} else {
+						logrus.Infof("skip alert for host %s", m.Hostname)
+					}
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
 					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
