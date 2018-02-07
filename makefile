@@ -7,7 +7,7 @@ all: clean linux darwin windows
 linux: 
 	GOOS=linux GOARCH=386 go build -o ${BUILD_DIR}/pingback-linux-386 .
 	GOOS=linux GOARCH=amd64 go build -o ${BUILD_DIR}/pingback-linux-amd64 .
-	GOOS=linux GOARCH=arm GOARM=6 go build -o ${BUILD_DIR}/pingback-linux-arm .
+	GOOS=linux GOARCH=arm GOARM=6 go build -o ${BUILD_DIR}/pingback-linux-arm6 .
 
 windows:
 	GOOS=windows GOARCH=386 go build -o ${BUILD_DIR}/pingback-winows-386.exe .
