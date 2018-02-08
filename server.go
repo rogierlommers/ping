@@ -17,9 +17,10 @@ import (
 func startServer() error {
 	hostPort := fmt.Sprintf("%s:%d", host, port)
 	router := mux.NewRouter()
-	router.HandleFunc("/", rootHandler).Methods("GET")
-
 	api := router.PathPrefix("/api").Subrouter()
+
+	// handlers
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./assets/")))
 	api.HandleFunc("/ping", pingGETHandler).Methods("GET")
 	api.HandleFunc("/ping", pingPOSTHandler).Methods("POST")
 
