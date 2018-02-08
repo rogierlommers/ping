@@ -2,8 +2,7 @@
 Keep track of all your servers / nodes
 
 # project status
-[![Go Report Card](https://goreportcard.com/badge/github.com/rogierlommers/pingback)](https://goreportcard.com/report/github.com/rogierlommers/pingback)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/rogierlommers/pingback)](https://goreportcard.com/report/github.com/rogierlommers/pingback) [![CircleCI](https://circleci.com/gh/rogierlommers/pingback/tree/master.svg?style=svg)](https://circleci.com/gh/rogierlommers/pingback/tree/master)
 
 ## run a server once
 
