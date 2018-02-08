@@ -1,6 +1,10 @@
 # pingback
 Keep track of all your servers / nodes
 
+# project status
+[![Go Report Card](https://goreportcard.com/badge/github.com/rogierlommers/pingback)](https://goreportcard.com/report/github.com/rogierlommers/pingback)
+
+
 ## run a server once
 
 ```
