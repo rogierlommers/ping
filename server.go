@@ -121,7 +121,7 @@ func checkUptime() {
 						notifyDowntime(m)
 						m.lastAlert = time.Now()
 					} else {
-						logrus.Infof("skip alert for host %s", m.Hostname)
+						logrus.Debugf("skip alert for host %s", m.Hostname)
 					}
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
