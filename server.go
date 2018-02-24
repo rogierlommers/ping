@@ -49,7 +49,6 @@ func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 			Hostname:              message.Hostname,
 			PingTimeHumanFriendly: humanize.Time(message.pingTime),
 			IPv4:    message.IPv4,
-			IPv6:    message.IPv6,
 			NoAlert: message.NoAlert,
 		}
 
