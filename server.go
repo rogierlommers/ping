@@ -116,6 +116,7 @@ func checkUptime() {
 				lastMailDuration := time.Since(m.lastAlert)
 				if lastMailDuration.Minutes() > alertFrequency {
 					if !m.NoAlert {
+						logrus.Infof("triggering alert %v", m)
 						notifyDowntime(m)
 						m.lastAlert = time.Now()
 					} else {
@@ -123,7 +124,7 @@ func checkUptime() {
 					}
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
-					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
+					logrus.Infof("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
 				}
 			}
 		}
