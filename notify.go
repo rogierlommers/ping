@@ -50,7 +50,7 @@ func (mail *Mail) BuildMessage() string {
 
 func setupAlerting(user string, pass string, server string) {
 	if len(user) == 0 || len(pass) == 0 || len(server) == 0 {
-		logrus.Error("email user and/or password empty! (or smtp server)")
+		logrus.Errorf("email user (%s) and/or password (%s) empty! (or smtp server (%s))", user, pass, server)
 	} else {
 		logrus.Infof("enabling alerts for email %q", user)
 		receiver = user
@@ -63,7 +63,6 @@ func setupAlerting(user string, pass string, server string) {
 }
 
 func notifyDowntime(m *pingMessage) error {
-
 	mail := Mail{
 		senderId: receiver,
 		toIds:    []string{receiver},

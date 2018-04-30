@@ -48,7 +48,7 @@ func main() {
 	case "server":
 		// read environment var
 		emailUser = os.Getenv("emailuser")
-		emailPassword = os.Getenv("emailpassword")
+		emailPassword = os.Getenv("emailpass")
 		emailSMTP = os.Getenv("emailsmtp")
 		setupAlerting(emailUser, emailPassword, emailSMTP)
 

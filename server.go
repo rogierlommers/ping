@@ -34,7 +34,6 @@ func startServer() error {
 	}
 
 	// run http server
-	logrus.Infof("using email user %q", emailUser)
 	logrus.Infof("running as a server on %s", hostPort)
 	return srv.ListenAndServe()
 }
