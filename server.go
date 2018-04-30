@@ -116,15 +116,16 @@ func checkUptime() {
 				lastMailDuration := time.Since(m.lastAlert)
 				if lastMailDuration.Minutes() > alertFrequency {
 					if !m.NoAlert {
-						logrus.Infof("triggering alert %v", m)
-						notifyDowntime(m)
+						if err := notifyDowntime(m); err != nil {
+							logrus.Errorf("error triggering mail: %s", err)
+						}
 						m.lastAlert = time.Now()
 					} else {
 						logrus.Debugf("skip alert for host %s", m.Hostname)
 					}
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
-					logrus.Infof("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
+					logrus.Debugf("host %s down, last ping: %s, alerting in %f minutes", key, humanize.Time(m.pingTime), secondsUntilAlert)
 				}
 			}
 		}
