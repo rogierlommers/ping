@@ -15,6 +15,7 @@ var (
 	host          string
 	emailUser     string
 	emailPassword string
+	emailSMTP     string
 	port          int
 	debug         bool
 	noAlert       bool
@@ -37,7 +38,8 @@ func init() {
 	// read environment var
 	emailUser = os.Getenv("emailuser")
 	emailPassword = os.Getenv("emailpassword")
-	setupAlerting(emailUser, emailPassword)
+	emailSMTP = os.Getenv("emailsmtp")
+	setupAlerting(emailUser, emailPassword, emailSMTP)
 }
 
 func main() {
