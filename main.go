@@ -35,11 +35,6 @@ func init() {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	// read environment var
-	emailUser = os.Getenv("emailuser")
-	emailPassword = os.Getenv("emailpassword")
-	emailSMTP = os.Getenv("emailsmtp")
-	setupAlerting(emailUser, emailPassword, emailSMTP)
 }
 
 func main() {
@@ -51,6 +46,12 @@ func main() {
 		}
 
 	case "server":
+		// read environment var
+		emailUser = os.Getenv("emailuser")
+		emailPassword = os.Getenv("emailpassword")
+		emailSMTP = os.Getenv("emailsmtp")
+		setupAlerting(emailUser, emailPassword, emailSMTP)
+
 		if err := startServer(); err != nil {
 			logrus.Error(err)
 		}

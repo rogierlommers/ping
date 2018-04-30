@@ -58,7 +58,6 @@ func newPingMessage() (pingMessage, error) {
 	message := pingMessage{
 		Hostname: getHostname(),
 		IPv4:     getExternalIP("v4"),
-		IPv6:     getExternalIP("v6"),
 		NoAlert:  noAlert,
 	}
 

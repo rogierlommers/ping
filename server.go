@@ -49,7 +49,6 @@ func pingGETHandler(w http.ResponseWriter, r *http.Request) {
 			Hostname:              message.Hostname,
 			PingTimeHumanFriendly: humanize.Time(message.pingTime),
 			IPv4:    message.IPv4,
-			IPv6:    message.IPv6,
 			NoAlert: message.NoAlert,
 		}
 
@@ -121,7 +120,7 @@ func checkUptime() {
 						notifyDowntime(m)
 						m.lastAlert = time.Now()
 					} else {
-						logrus.Infof("skip alert for host %s", m.Hostname)
+						logrus.Debugf("skip alert for host %s", m.Hostname)
 					}
 				} else {
 					secondsUntilAlert := alertFrequency - lastMailDuration.Minutes()
