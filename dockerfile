@@ -1,12 +1,8 @@
-FROM ubuntu
+FROM scratch
 
 # container labels
 LABEL author="Rogier Lommers <rogier@lommers.org>"
 LABEL description="pingback server"
-
-# install dependencies
-RUN apt-get update  
-RUN apt-get install -y ca-certificates
 
 # add binary
 COPY bin/pingback-linux-amd64 /app/

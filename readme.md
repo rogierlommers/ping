@@ -9,12 +9,13 @@ Keep track of all your servers / nodes
 ```
 docker run --name=docker-pingback \
             -p 9005:8080 \
-            -e "emailuser=your@gmail" \
-            -e "emailpassword=yourpass" \
+            -e "emailuser=youremailusername" \
+            -e "emailpassword=youremailpass" \
+            -e "emailsmtp=yoursmtp.server.com" \
             rogierlommers/pingback-server
 ```
 
-This will start the server. Notification emails are sent to the provided (gmail) address.
+This will start the server. Notification emails are sent to the provided (smtp server) address.
 
 ## run on each client
 

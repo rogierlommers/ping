@@ -57,7 +57,7 @@ func pingBack(message pingMessage) error {
 func newPingMessage() (pingMessage, error) {
 	message := pingMessage{
 		Hostname: getHostname(),
-		IPv4:     getExternalIP("v4"),
+		IPv4:     getExternalIP(),
 		NoAlert:  noAlert,
 	}
 
@@ -73,15 +73,8 @@ func getHostname() string {
 	return hostname
 }
 
-func getExternalIP(version string) string {
-	var targetURL string
-
-	switch version {
-	case "v4":
-		targetURL = "http://ipv4.myexternalip.com/raw"
-	case "v6":
-		targetURL = "http://ipv6.myexternalip.com/raw"
-	}
+func getExternalIP() string {
+	targetURL := "https://myexternalip.com/raw"
 
 	resp, err := http.Get(targetURL)
 	if err != nil {
